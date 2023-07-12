@@ -8,7 +8,10 @@ In addition, you will compare your implementation with an existing Python librar
 Write a Python program that implements the Apriori algorithm. 
 The program should take as input a list of transactions and a minimum support threshold. 
 It should return all the frequent item sets that have a support greater than the threshold.
-For example, if the list of transactions is [['bread', 'butter'], ['butter', 'milk'], ['bread'], ['bread', 'butter', 'milk'], ['butter', 'milk']] and the threshold is 0.6, your program should return [['butter'], ['bread', 'butter'], ['butter', 'milk']].
+For example, if the list of transactions is `
+[['bread', 'butter'], ['butter', 'milk'], ['bread'], ['bread', 'butter', 'milk'], ['butter', 'milk']]` 
+and the threshold is 0.6, your program should return `
+[['butter'], ['bread', 'butter'], ['butter', 'milk']]`.
 
 Write a function to test your program. 
 The function should take as input a list of transactions and a threshold and print all the frequent item sets that your program finds. 
