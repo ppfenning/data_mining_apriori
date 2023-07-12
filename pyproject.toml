@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "data-mining-apriori"
+version = "0.1.0"
+description = ""
+authors = ["pfenningpat <pat.pfenning@blastpoint.com>"]
+readme = "README.md"
+packages = [{include = "data_mining_apriori"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
