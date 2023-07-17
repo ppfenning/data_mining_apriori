@@ -31,12 +31,22 @@ def __get_freq(transactions, supp_cnt, k):
     """Get frequency itemset at k^th support"""
     df = __get_df(transactions, k)
     # check tuples which are above support, get columns and return sum to show support
-    check_sum = df.sum()
-    freq = check_sum[check_sum >= supp_cnt]
+    counter = df.sum()
+    freq = counter[counter >= supp_cnt]
     if freq.empty:
         return freq, None
     else:
         return freq, __get_items(freq, k)
+
+
+def __get_itemsets(frequency_itemset, tcnt):
+    """Match mlxtend structure (support, itemsets)"""
+    # create dataframe with support percentage
+    itemset_support = pd.DataFrame(frequency_itemset / tcnt, columns=["support"])
+    # create frozensets from tuples
+    itemset_support['itemsets'] = [frozenset(item) for item in frequency_itemset.index]
+    # reset index to ints
+    return itemset_support.reset_index(drop=True)
 
 
 def apriori(transactions, min_support):
@@ -46,17 +56,16 @@ def apriori(transactions, min_support):
     k = 1
     while True:
         freq, items = __get_freq(transactions, supp_cnt, k)
-        frequency_itemset = pd.concat([frequency_itemset, freq])
         if items:
             # update frequency dictionary each step
             # increase level
             k += 1
+            frequency_itemset = pd.concat([frequency_itemset, freq])
             # limit transactions to rows which purchased at min k items, only use columns in item list
             transactions = transactions.loc[transactions.sum(axis=1) >= k, list(items)]
         else:
             # if no items stop loop
             break
-    itemset_support = pd.DataFrame(frequency_itemset/tcnt, columns=["support"])
-    itemset_support['itemsets'] = [frozenset(item) for item in frequency_itemset.index]
-    return itemset_support.reset_index(drop=True)
+    return __get_itemsets(frequency_itemset, tcnt)
+
 

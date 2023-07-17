@@ -24,6 +24,11 @@ if __name__ == '__main__':
         mlb.fit_transform(basket),
         columns=mlb.classes_,
         index=basket.index
-    )
+    ).astype(bool)
+    # run my algorithm
     mine = apriori(transactions, MIN_SUPPORT)
+    # run mlxtend algorithm
     theirs = ml_apriori(transactions, MIN_SUPPORT, use_colnames=True)
+    # check if any differences (should sum to zero)
+    check_sum = (mine.set_index("itemsets") - theirs.set_index("itemsets")).sum()
+
