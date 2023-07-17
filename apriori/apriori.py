@@ -1,4 +1,3 @@
-import numpy as np
 from itertools import combinations
 import operator
 from functools import reduce
