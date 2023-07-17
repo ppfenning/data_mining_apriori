@@ -40,4 +40,5 @@ def __verify(transactions, min_support):
 
 if __name__ == '__main__':
     # verify with checksum
-    out, ml_out, chuck_sum = __verify(__get_transactions(TRANSACTIONS), MIN_SUPPORT)
+    out, ml_out, check_sum = __verify(__get_transactions(TRANSACTIONS), MIN_SUPPORT)
+    print(check_sum)
