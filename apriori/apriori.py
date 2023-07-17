@@ -1,5 +1,32 @@
 import numpy as np
 from itertools import combinations
+import operator
+from functools import reduce
+
+import pandas as pd
+
+
+def __get_df(transactions, k):
+    if k == 1:
+        return transactions.copy()
+    combos = dict()
+    for c in combinations(transactions.columns, k):
+        combos[c] = transactions[list(c)].all(axis=1)
+    return pd.DataFrame(combos)
+
+
+def __get_items(freq, k):
+    if k == 1:
+        return freq.keys()
+    return set(list(reduce(operator.concat, freq.keys())))
+
+
+def __get_freq(transactions, supp_cnt, k):
+    df = __get_df(transactions, k)
+    freq = df[df.columns[(df.sum() >= supp_cnt)]].sum().to_dict()
+    if freq:
+        return freq, __get_items(freq, k)
+    return freq, None
 
 
 def apriori(transactions, min_support):
@@ -9,25 +36,11 @@ def apriori(transactions, min_support):
     freq = dict()
     k = 1
     while True:
-        if k == 1:
-            freq = transactions[transactions.columns[(transactions.sum() >= supp_cnt)]].sum().to_dict()
-            items = frequency_itemset.keys()
-        else:
-            freq = dict()
-            # TODO: complete this step with map
-            for c in combinations(transactions.columns, k):
-                check = transactions[list(c)].all(axis=1).sum()
-                if check >= supp_cnt:
-                    freq[c] = check
-            new_items = set()
-            for val in freq.keys():
-                for v in val:
-                    new_items.add(v)
-            items = list(new_items)
-        if freq:
+        freq, items = __get_freq(transactions, supp_cnt, k)
+        if items:
             frequency_itemset.update(freq)
             k += 1
-            transactions = transactions.loc[transactions.sum(axis=1) >= k, items]
+            transactions = transactions.loc[transactions.sum(axis=1) >= k, list(items)]
         else:
             break
     return frequency_itemset

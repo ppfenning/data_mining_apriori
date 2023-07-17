@@ -22,4 +22,4 @@ if __name__ == '__main__':
         columns=mlb.classes_,
         index=basket.index
     )
-    print(apriori(transactions, .005))
+    print(apriori(transactions, .03))
