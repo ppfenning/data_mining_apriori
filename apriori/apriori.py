@@ -50,8 +50,8 @@ def __get_itemsets(frequency_itemset, tcnt):
 
 
 def apriori(transactions, min_support):
-    supp_cnt = min_support*transactions.shape[0]
     tcnt = transactions.shape[0]
+    supp_cnt = min_support*tcnt
     frequency_itemset = pd.Series()
     k = 1
     while True:
