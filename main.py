@@ -14,21 +14,30 @@ if params.exists():
 TRANSACTIONS = Path(os.getenv("TRANSACTIONS"))
 MIN_SUPPORT = float(os.getenv("MIN_SUPPORT"))
 
-if __name__ == '__main__':
+
+def __get_transactions(fpath):
     # use wrong delim so each transaction is a row
-    min_support = 0.03
     basket = pd.read_csv(TRANSACTIONS, delimiter="|", names=[0])[0].str.split(",")
     # one hot encode, providing full dataset
     mlb = MultiLabelBinarizer()
-    transactions = pd.DataFrame(
+    return pd.DataFrame(
         mlb.fit_transform(basket),
         columns=mlb.classes_,
         index=basket.index
     ).astype(bool)
-    # run my algorithm
-    mine = apriori(transactions, MIN_SUPPORT)
-    # run mlxtend algorithm
-    theirs = ml_apriori(transactions, MIN_SUPPORT, use_colnames=True)
-    # check if any differences (should sum to zero)
-    check_sum = (mine.set_index("itemsets") - theirs.set_index("itemsets")).sum()
 
+
+def __verify(transactions, min_support):
+    # run my apriori
+    out = apriori(transactions, min_support)
+    # run mlxtend apriori
+    ml_out =  ml_apriori(transactions, min_support, use_colnames=True)
+    # check sum to verify these are the same
+    check_sum = (out.set_index("itemsets") - ml_out.set_index("itemsets")).sum()
+    check_sum.index = ["check_sum"]
+    return out, ml_out, check_sum
+
+
+if __name__ == '__main__':
+    # verify with checksum
+    out, ml_out, chuck_sum = __verify(__get_transactions(TRANSACTIONS), MIN_SUPPORT)
