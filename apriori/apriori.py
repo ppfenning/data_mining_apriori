@@ -6,29 +6,29 @@ def apriori(transactions, min_support):
     supp_cnt = np.floor(min_support*transactions.shape[0])
     items = transactions.columns
     frequency_itemset = dict()
+    freq = dict()
     k = 1
     while True:
-        transactions = transactions.loc[transactions.sum(axis=1) >= k, items]
         if k == 1:
-            frequency_itemset.update(
-                transactions[transactions.columns[(transactions.sum() >= supp_cnt)]].sum().to_dict()
-            )
+            freq = transactions[transactions.columns[(transactions.sum() >= supp_cnt)]].sum().to_dict()
             items = frequency_itemset.keys()
         else:
             freq = dict()
+            # TODO: complete this step with map
             for c in combinations(transactions.columns, k):
                 check = transactions[list(c)].all(axis=1).sum()
                 if check >= supp_cnt:
                     freq[c] = check
-            if freq:
-                frequency_itemset.update(freq)
-                new_items = set()
-                for val in freq.keys():
-                    for v in val:
-                        new_items.add(v)
-                items = list(new_items)
-            else:
-                break
-        k += 1
+            new_items = set()
+            for val in freq.keys():
+                for v in val:
+                    new_items.add(v)
+            items = list(new_items)
+        if freq:
+            frequency_itemset.update(freq)
+            k += 1
+            transactions = transactions.loc[transactions.sum(axis=1) >= k, items]
+        else:
+            break
     return frequency_itemset
 
